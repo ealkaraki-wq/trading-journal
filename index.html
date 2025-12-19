@@ -3,588 +3,551 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>دفتر التداول - نظام شخصي</title>
+  <title>Trading System — RR/HR + Checklist</title>
   <style>
-    :root{
-      --bg:#0b1220; --card:#101a2e; --muted:#91a4c7; --text:#e8f0ff;
-      --accent:#4da3ff; --danger:#ff5a6b; --ok:#4dffb5; --line:#1f2b46;
+    :root { --bg:#0b1020; --card:#121a33; --muted:#9aa7c7; --text:#eef2ff; --good:#41d38b; --bad:#ff5c7a; --warn:#ffcc66; }
+    *{box-sizing:border-box} body{margin:0;font-family:system-ui,Segoe UI,Tahoma,Arial; background:linear-gradient(180deg,#0b1020,#070b16); color:var(--text);}
+    header{padding:18px 16px; border-bottom:1px solid rgba(255,255,255,.08); position:sticky; top:0; backdrop-filter: blur(8px); background:rgba(11,16,32,.7);}
+    h1{margin:0;font-size:18px} .sub{color:var(--muted); font-size:13px; margin-top:4px}
+    main{max-width:1100px; margin:0 auto; padding:16px; display:grid; grid-template-columns: 1fr; gap:12px;}
+    @media(min-width:980px){ main{grid-template-columns: 420px 1fr;} }
+    .card{background:rgba(18,26,51,.92); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:14px; box-shadow:0 10px 40px rgba(0,0,0,.25);}
+    .row{display:flex; gap:10px; flex-wrap:wrap}
+    label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
+    input,select,button,textarea{
+      width:100%; padding:10px 10px; border-radius:12px; border:1px solid rgba(255,255,255,.10);
+      background:#0b1228; color:var(--text); outline:none;
     }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#070b14 0%, var(--bg) 35%, #050812 100%);color:var(--text)}
-    a{color:var(--accent)}
-    .wrap{max-width:1100px;margin:0 auto;padding:22px}
-    .topbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:14px}
-    .brand{display:flex;gap:10px;align-items:center}
-    .logo{width:38px;height:38px;border-radius:12px;background:rgba(77,163,255,.2);border:1px solid rgba(77,163,255,.35);display:flex;align-items:center;justify-content:center}
-    .logo span{font-weight:800;color:var(--accent)}
-    .brand h1{font-size:16px;margin:0}
-    .brand p{margin:2px 0 0;font-size:12px;color:var(--muted)}
-    .actions{display:flex;gap:10px;flex-wrap:wrap}
-    button,.btn{
-      background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-      color:var(--text);padding:10px 12px;border-radius:12px;cursor:pointer;
-      transition:.15s transform,.15s border-color,.15s background
-    }
-    button:hover{transform:translateY(-1px);border-color:rgba(77,163,255,.45)}
-    .btn-accent{background:rgba(77,163,255,.18);border-color:rgba(77,163,255,.45)}
-    .btn-danger{background:rgba(255,90,107,.14);border-color:rgba(255,90,107,.35)}
-    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}
-    @media (max-width: 980px){.grid{grid-template-columns:1fr}}
-    .card{
-      background:rgba(16,26,46,.85);border:1px solid rgba(255,255,255,.10);
-      border-radius:18px;padding:14px
-    }
-    .card h2{font-size:14px;margin:0 0 10px}
-    .row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-    @media (max-width: 760px){.row{grid-template-columns:1fr}}
-    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
-    input,select,textarea{
-      width:100%;padding:10px 11px;border-radius:12px;border:1px solid rgba(255,255,255,.12);
-      background:rgba(0,0,0,.18);color:var(--text);outline:none
-    }
-    textarea{min-height:86px;resize:vertical}
-    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-    @media (max-width: 760px){.kpis{grid-template-columns:1fr 1fr}}
-    .kpi{background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.10);border-radius:16px;padding:12px}
-    .kpi .t{font-size:11px;color:var(--muted)}
-    .kpi .v{font-size:18px;margin-top:6px;font-weight:750}
-    .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.18);font-size:12px;color:var(--muted)}
-    .ok{color:var(--ok);border-color:rgba(77,255,181,.25);background:rgba(77,255,181,.08)}
-    .bad{color:var(--danger);border-color:rgba(255,90,107,.25);background:rgba(255,90,107,.08)}
-    .muted{color:var(--muted)}
-    .split{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-    .checks{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    @media (max-width: 760px){.checks{grid-template-columns:1fr}}
-    .check{display:flex;gap:10px;align-items:flex-start;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.10);border-radius:16px;padding:10px}
-    .check input{width:18px;height:18px;margin-top:2px}
-    table{width:100%;border-collapse:separate;border-spacing:0 8px}
-    th{font-size:11px;color:var(--muted);text-align:right;padding:0 10px}
-    td{background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.10);padding:10px;border-left:none;border-right:none}
-    tr td:first-child{border-radius:14px 0 0 14px;border-right:1px solid rgba(255,255,255,.10)}
-    tr td:last-child{border-radius:0 14px 14px 0;border-left:1px solid rgba(255,255,255,.10)}
-    .tag{font-weight:700}
-    .pos{color:var(--ok);font-weight:800}
-    .neg{color:var(--danger);font-weight:800}
-    .small{font-size:12px}
-    .footer{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.6}
-    .hr{height:1px;background:rgba(255,255,255,.10);margin:10px 0}
-    .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    @media (max-width: 760px){.two{grid-template-columns:1fr}}
-    .hidden{display:none}
+    input:focus,select:focus,textarea:focus{border-color:rgba(130,170,255,.55)}
+    .col{flex:1; min-width:140px}
+    .btn{cursor:pointer; font-weight:700}
+    .btn.primary{background:linear-gradient(90deg,#3b82f6,#22c55e); border:none}
+    .btn.ghost{background:transparent}
+    .btn.danger{background:rgba(255,92,122,.12); border:1px solid rgba(255,92,122,.35)}
+    .pill{display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.10); background:rgba(11,18,40,.55); font-size:12px; color:var(--muted)}
+    .kpi{display:grid; grid-template-columns:repeat(2,1fr); gap:10px}
+    @media(min-width:980px){ .kpi{grid-template-columns:repeat(4,1fr);} }
+    .kpi .card{padding:12px}
+    .kpi .v{font-size:18px; font-weight:800; margin-top:6px}
+    .good{color:var(--good)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+    table{width:100%; border-collapse:collapse; overflow:hidden; border-radius:14px}
+    th,td{padding:10px 8px; font-size:12px; border-bottom:1px solid rgba(255,255,255,.08); text-align:right}
+    th{color:var(--muted); font-weight:700; background:rgba(11,18,40,.55)}
+    tr:hover td{background:rgba(255,255,255,.03)}
+    .small{font-size:12px; color:var(--muted)}
+    .split{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .right{margin-inline-start:auto}
+    .tag{padding:4px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.10); color:var(--muted); font-size:11px}
+    .tag.good{border-color:rgba(65,211,139,.35); color:rgba(65,211,139,.95)}
+    .tag.bad{border-color:rgba(255,92,122,.35); color:rgba(255,92,122,.95)}
+    .tag.warn{border-color:rgba(255,204,102,.35); color:rgba(255,204,102,.95)}
+    .divider{height:1px; background:rgba(255,255,255,.08); margin:10px 0}
+    .checkgrid{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+    @media(min-width:980px){ .checkgrid{grid-template-columns:1fr 1fr 1fr;} }
+    .checkitem{display:flex; gap:8px; align-items:flex-start; padding:10px; border-radius:12px; background:rgba(11,18,40,.55); border:1px solid rgba(255,255,255,.08)}
+    .checkitem input{width:auto; margin-top:2px}
+    .hint{color:var(--muted); font-size:12px; line-height:1.5}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, monospace}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="topbar">
-      <div class="brand">
-        <div class="logo"><span>TR</span></div>
-        <div>
-          <h1>دفتر التداول — نظام شخصي (Crypto)</h1>
-          <p>محلي على جهازك (LocalStorage) + نسخ احتياطي Export/Import</p>
-        </div>
+<header>
+  <h1>نظام التداول — RR / HR + Checklist</h1>
+  <div class="sub">1R = 1% من رأس المال • RR الأدنى 1:2 • تنفيذ 15m/5m بعد قرار 4H وتضييق 1H</div>
+</header>
+
+<main>
+  <!-- LEFT: Strategy + Entry -->
+  <section class="card">
+    <div class="split">
+      <div class="pill">📌 <b>قانونك</b> <span class="small">A+B+C + RR≥1:2 + Risk=1%</span></div>
+      <button class="btn ghost right" id="resetAllBtn" title="مسح كل البيانات">إعادة ضبط</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+      <div class="col">
+        <label>رأس المال الحالي ($)</label>
+        <input id="equity" type="number" min="1" step="0.01" value="100" />
       </div>
-      <div class="actions">
-        <button class="btn-accent" id="exportBtn">تصدير البيانات (JSON)</button>
-        <button id="importBtn">استيراد (JSON)</button>
-        <input id="importFile" type="file" accept="application/json" class="hidden" />
-        <button class="btn-danger" id="resetBtn">تصفير الدفتر</button>
+      <div class="col">
+        <label>المخاطرة لكل صفقة (%)</label>
+        <select id="riskPct">
+          <option value="1" selected>1%</option>
+          <option value="0.5">0.5%</option>
+          <option value="2">2%</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>الحد اليومي للخسارة (%)</label>
+        <select id="dailyLossLimitPct">
+          <option value="2" selected>2%</option>
+          <option value="3">3%</option>
+          <option value="1">1%</option>
+        </select>
       </div>
     </div>
 
-    <div class="grid">
-      <!-- Left -->
-      <div class="card">
-        <h2>لوحة التحكم</h2>
-        <div class="row">
-          <div>
-            <label>رأس المال الحالي ($)</label>
-            <input id="capital" type="number" min="0" step="0.01" value="100" />
-          </div>
-          <div>
-            <label>المخاطرة لكل صفقة (%)</label>
-            <input id="riskPct" type="number" min="0" step="0.1" value="1" />
-          </div>
-          <div>
-            <label>الهدف الشهري (%)</label>
-            <input id="monthlyTargetPct" type="number" min="0" step="0.1" value="5" />
-          </div>
-        </div>
+    <div class="divider"></div>
 
-        <div class="hr"></div>
+    <h3 style="margin:0 0 8px 0;font-size:14px">✅ Checklist قبل الصفقة</h3>
+    <div class="checkgrid" id="checklist">
+      <div class="checkitem"><input type="checkbox" id="chkA"><div><b>A الاتجاه 4H واضح</b><div class="hint">صاعد=لونج فقط، هابط=شورت فقط</div></div></div>
+      <div class="checkitem"><input type="checkbox" id="chkB"><div><b>B المكان 1H</b><div class="hint">عرض/طلب + (0.5–0.618) إن أمكن</div></div></div>
+      <div class="checkitem"><input type="checkbox" id="chkC"><div><b>C إشارة 15m/5m</b><div class="hint">رفض/ابتلاع/كسر+ريتست/ضعف زخم</div></div></div>
+      <div class="checkitem"><input type="checkbox" id="chkRR"><div><b>RR ≥ 1 : 2</b><div class="hint">أقل من هيك = مرفوض</div></div></div>
+      <div class="checkitem"><input type="checkbox" id="chkRisk"><div><b>Risk = 1R فقط</b><div class="hint">لا تكبير مخاطرة</div></div></div>
+      <div class="checkitem"><input type="checkbox" id="chkMind"><div><b>مزاجي هادي</b><div class="hint">مش غضبان/مش استعجال/مش انتقام</div></div></div>
+    </div>
 
-        <div class="kpis">
-          <div class="kpi">
-            <div class="t">المخاطرة بالدولار / صفقة</div>
-            <div class="v" id="riskUsd">—</div>
-          </div>
-          <div class="kpi">
-            <div class="t">عدد الصفقات (كل السجل)</div>
-            <div class="v" id="tradesCount">—</div>
-          </div>
-          <div class="kpi">
-            <div class="t">الربح/الخسارة (كل السجل)</div>
-            <div class="v" id="totalPnl">—</div>
-          </div>
-          <div class="kpi">
-            <div class="t">نسبة النجاح HR</div>
-            <div class="v" id="hitRate">—</div>
-          </div>
-        </div>
+    <div class="divider"></div>
 
-        <div class="hr"></div>
+    <h3 style="margin:0 0 8px 0;font-size:14px">➕ إضافة صفقة</h3>
 
-        <div class="split">
-          <h2 style="margin:0">Checklist قبل الصفقة</h2>
-          <span class="pill" id="readyPill">غير جاهز للدخول</span>
-        </div>
-
-        <div class="checks" style="margin-top:10px">
-          <label class="check"><input type="checkbox" class="chk" id="c1" /> <div><div class="tag">الاتجاه واضح على 4H</div><div class="muted small">صاعد/هابط واضح، مش تذبذب</div></div></label>
-          <label class="check"><input type="checkbox" class="chk" id="c2" /> <div><div class="tag">السعر في منطقة منطقية</div><div class="muted small">قرب عرض/طلب أو منطقة مهمة</div></div></label>
-          <label class="check"><input type="checkbox" class="chk" id="c3" /> <div><div class="tag">RR لا يقل عن 1:2</div><div class="muted small">هدف منطقي قبل مقاومة/دعم معاكس</div></div></label>
-          <label class="check"><input type="checkbox" class="chk" id="c4" /> <div><div class="tag">أنا هادئ وأقبل الخسارة</div><div class="muted small">لا استعجال، لا انتقام</div></div></label>
-        </div>
-
-        <div class="footer">
-          قاعدة النظام: صفقة واحدة نظيفة باليوم (أو لا شيء). خسارتين متتاليتين = توقف.
-        </div>
+    <div class="row">
+      <div class="col">
+        <label>الزوج</label>
+        <input id="symbol" placeholder="مثال: XMRUSDT" value="XMRUSDT" />
       </div>
-
-      <!-- Right -->
-      <div class="card">
-        <h2>تسجيل صفقة</h2>
-        <div class="two">
-          <div>
-            <label>التاريخ</label>
-            <input id="date" type="date" />
-          </div>
-          <div>
-            <label>العملة</label>
-            <input id="symbol" placeholder="مثال: BTCUSDT" />
-          </div>
-          <div>
-            <label>نوع الصفقة</label>
-            <select id="side">
-              <option value="Long">شراء (Long)</option>
-              <option value="Short">بيع (Short)</option>
-            </select>
-          </div>
-          <div>
-            <label>الفريم (للدخول)</label>
-            <select id="tf">
-              <option>15m</option><option>1h</option><option>4h</option><option>1d</option>
-            </select>
-          </div>
-          <div>
-            <label>سعر الدخول</label>
-            <input id="entry" type="number" step="0.0001" min="0" />
-          </div>
-          <div>
-            <label>وقف الخسارة</label>
-            <input id="stop" type="number" step="0.0001" min="0" />
-          </div>
-          <div>
-            <label>الهدف (Take Profit)</label>
-            <input id="target" type="number" step="0.0001" min="0" />
-          </div>
-          <div>
-            <label>السبب (مختصر)</label>
-            <input id="reason" placeholder="اتجاه + تصحيح + إشارة دخول" />
-          </div>
-        </div>
-
-        <label style="margin-top:10px">ملاحظات</label>
-        <textarea id="notes" placeholder="شو شفت؟ شو حسّيت؟ هل التزمت؟"></textarea>
-
-        <div class="two" style="margin-top:10px">
-          <div class="kpi">
-            <div class="t">RR محسوبة تلقائيًا</div>
-            <div class="v" id="rrOut">—</div>
-          </div>
-          <div class="kpi">
-            <div class="t">حجم المخاطرة (1% من رأس المال)</div>
-            <div class="v" id="riskOut">—</div>
-          </div>
-        </div>
-
-        <div class="split" style="margin-top:10px">
-          <div class="actions">
-            <button id="saveTradeBtn" class="btn-accent">حفظ الصفقة</button>
-          </div>
-          <div class="actions">
-            <button id="markWinBtn">تسجيلها رابحة ✅</button>
-            <button id="markLossBtn">تسجيلها خاسرة ❌</button>
-            <button id="markNoBtn">بدون صفقة (إلغاء)</button>
-          </div>
-        </div>
-
-        <div class="footer">
-          نصيحة: لا تسجّل "رابحة/خاسرة" إلا بعد انتهاء الصفقة. أولًا احفظها، ثم حدّث النتيجة.
-        </div>
+      <div class="col">
+        <label>النوع</label>
+        <select id="side">
+          <option value="LONG" selected>LONG</option>
+          <option value="SHORT">SHORT</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>الفريم التنفيذي</label>
+        <select id="tf">
+          <option value="15m" selected>15m</option>
+          <option value="5m">5m</option>
+        </select>
       </div>
     </div>
 
-    <div class="grid" style="margin-top:14px">
-      <div class="card">
-        <div class="split">
-          <h2 style="margin:0">سجل الصفقات</h2>
-          <div class="actions">
-            <input id="filterSym" placeholder="فلتر بالعملة (مثال BTC)" style="max-width:220px" />
-            <select id="filterResult" style="max-width:220px">
-              <option value="">كل النتائج</option>
-              <option value="WIN">رابحة</option>
-              <option value="LOSS">خاسرة</option>
-              <option value="OPEN">مفتوحة</option>
-            </select>
-          </div>
-        </div>
-        <div style="overflow:auto">
-          <table>
-            <thead>
-              <tr>
-                <th>تاريخ</th><th>عملة</th><th>نوع</th><th>دخول</th><th>ستوب</th><th>هدف</th><th>RR</th><th>النتيجة</th><th>PnL$</th><th>إجراء</th>
-              </tr>
-            </thead>
-            <tbody id="tradesBody"></tbody>
-          </table>
-        </div>
+    <div class="row">
+      <div class="col">
+        <label>Entry</label>
+        <input id="entry" type="number" step="0.0001" placeholder="سعر الدخول" />
       </div>
-
-      <div class="card">
-        <h2>مراجعة سريعة</h2>
-        <div class="kpis">
-          <div class="kpi">
-            <div class="t">هذا الأسبوع: عدد الصفقات</div>
-            <div class="v" id="wkTrades">—</div>
-          </div>
-          <div class="kpi">
-            <div class="t">هذا الأسبوع: PnL$</div>
-            <div class="v" id="wkPnl">—</div>
-          </div>
-          <div class="kpi">
-            <div class="t">هذا الشهر: عدد الصفقات</div>
-            <div class="v" id="moTrades">—</div>
-          </div>
-          <div class="kpi">
-            <div class="t">هذا الشهر: PnL$</div>
-            <div class="v" id="moPnl">—</div>
-          </div>
-        </div>
-
-        <div class="hr"></div>
-
-        <h2 style="margin-top:0">أسئلة المراجعة (اكتبها عندك)</h2>
-        <ul class="muted" style="margin:0;line-height:1.8">
-          <li>هل كنت ملتزمًا بالقواعد؟ (أكثر من الربح)</li>
-          <li>هل دخلت من منتصف الحركة؟</li>
-          <li>هل فتحت صفقة وأنا متوتر؟</li>
-          <li>هل التزمت بصفقة واحدة باليوم؟</li>
-        </ul>
+      <div class="col">
+        <label>Stop</label>
+        <input id="stop" type="number" step="0.0001" placeholder="ستوب" />
+      </div>
+      <div class="col">
+        <label>Take Profit</label>
+        <input id="tp" type="number" step="0.0001" placeholder="هدف" />
       </div>
     </div>
 
-    <div class="footer" style="margin-top:16px">
-      ملاحظة: هذا الدفتر يعمل محليًا في متصفحك. لو بدك تنقله لجهاز آخر، استخدم "تصدير البيانات" ثم "استيراد".
+    <div class="row">
+      <div class="col">
+        <label>سبب الدخول (اختصرها)</label>
+        <input id="reason" placeholder="مثال: طلب 1H + فيبو 0.618 + ابتلاع 15m" />
+      </div>
+      <div class="col">
+        <label>ملاحظات</label>
+        <input id="notes" placeholder="اختياري" />
+      </div>
     </div>
-  </div>
+
+    <div class="row">
+      <div class="col">
+        <label>نتيجة الصفقة (R)</label>
+        <select id="resultR">
+          <option value="">— اختر —</option>
+          <option value="-1">خسارة (-1R)</option>
+          <option value="2">ربح (2R)</option>
+          <option value="2.5">ربح (2.5R)</option>
+          <option value="3">ربح (3R)</option>
+          <option value="0">تعادل (0R)</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>التاريخ</label>
+        <input id="date" type="date" />
+      </div>
+      <div class="col">
+        <label>&nbsp;</label>
+        <button class="btn primary" id="addTradeBtn">إضافة</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 style="margin:0 0 8px 0;font-size:14px">🧮 حاسبة حجم الصفقة (Position Size)</h3>
+    <div class="row">
+      <div class="col">
+        <label>المخاطرة $ (تلقائي)</label>
+        <input id="riskUsd" class="mono" disabled />
+      </div>
+      <div class="col">
+        <label>المسافة للستوب (|Entry-Stop|)</label>
+        <input id="stopDist" class="mono" disabled />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <label>الكمية (Units) ≈ Risk$ ÷ StopDist</label>
+        <input id="positionUnits" class="mono" disabled />
+      </div>
+      <div class="col">
+        <label>قيمة الربح/الخسارة عند 1R ($)</label>
+        <input id="oneRUsd" class="mono" disabled />
+      </div>
+    </div>
+    <div class="hint">ملاحظة: هذه الحاسبة تقديرية. في العقود الدائمة/الرافعة، الهامش مختلف لكن “الخطر الحقيقي” يبقى حسب الستوب.</div>
+  </section>
+
+  <!-- RIGHT: Stats + Table -->
+  <section class="card">
+    <div class="kpi">
+      <div class="card">
+        <div class="small">عدد الصفقات</div>
+        <div class="v" id="kTrades">0</div>
+      </div>
+      <div class="card">
+        <div class="small">HR (نسبة نجاح)</div>
+        <div class="v" id="kHR">0%</div>
+      </div>
+      <div class="card">
+        <div class="small">متوسط RR (من النتائج)</div>
+        <div class="v" id="kAvgRR">—</div>
+      </div>
+      <div class="card">
+        <div class="small">إجمالي R</div>
+        <div class="v" id="kTotalR">0R</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="split">
+      <div class="row" style="flex:1">
+        <div class="col" style="min-width:220px">
+          <label>فلترة: الزوج</label>
+          <input id="filterSymbol" placeholder="مثال: XMRUSDT (اتركه فاضي لكل الأزواج)" />
+        </div>
+        <div class="col" style="min-width:180px">
+          <label>فلترة: الشهر</label>
+          <input id="filterMonth" type="month" />
+        </div>
+      </div>
+      <div class="right split">
+        <span class="tag warn" id="dailyGuard">حارس اليوم: غير محسوب</span>
+        <button class="btn ghost" id="exportBtn">تصدير CSV</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>تاريخ</th>
+          <th>زوج</th>
+          <th>نوع</th>
+          <th>TF</th>
+          <th>Entry</th>
+          <th>Stop</th>
+          <th>TP</th>
+          <th>RR</th>
+          <th>Result (R)</th>
+          <th>Result ($)</th>
+          <th>ملاحظات</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+
+    <div class="divider"></div>
+    <div class="hint">
+      <b>قانون توقف اليوم:</b> إذا مجموع نتائج اليوم ≤ -{حد الخسارة اليومي}% (بالـR)، توقف.  
+      مثال: مخاطرة 1% وحد يومي 2% → إذا وصلت -2R خلال يوم واحد = توقف.
+    </div>
+  </section>
+</main>
 
 <script>
-  // ---------- Storage ----------
-  const KEY = "trading_journal_v1";
-  const CFG = "trading_journal_cfg_v1";
+  // ===== Utilities =====
+  const $ = (id) => document.getElementById(id);
+  const fmt = (n, d=2) => (Number.isFinite(n) ? n.toFixed(d) : "—");
+  const todayISO = () => new Date().toISOString().slice(0,10);
 
-  function loadState(){
-    const s = localStorage.getItem(KEY);
-    return s ? JSON.parse(s) : { trades: [] };
+  // ===== State =====
+  const LS_KEY = "trading_system_v1";
+  let state = {
+    equity: 100,
+    riskPct: 1,
+    dailyLossLimitPct: 2,
+    trades: []
+  };
+
+  function load() {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) {
+      try { state = JSON.parse(raw); } catch {}
+    }
   }
-  function saveState(state){
-    localStorage.setItem(KEY, JSON.stringify(state));
-  }
-  function loadCfg(){
-    const c = localStorage.getItem(CFG);
-    return c ? JSON.parse(c) : { capital:100, riskPct:1, monthlyTargetPct:5 };
-  }
-  function saveCfg(cfg){
-    localStorage.setItem(CFG, JSON.stringify(cfg));
+  function save() {
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
   }
 
-  // ---------- Helpers ----------
-  const $ = (id)=>document.getElementById(id);
-  const fmt = (n)=> (isFinite(n) ? (Math.round(n*100)/100).toLocaleString() : "—");
-  const todayISO = ()=> new Date().toISOString().slice(0,10);
+  function calcRiskUsd() {
+    const eq = Number(state.equity) || 0;
+    const rp = Number(state.riskPct) || 0;
+    return eq * (rp/100);
+  }
 
-  function calcRR(entry, stop, target){
-    entry = Number(entry); stop = Number(stop); target = Number(target);
-    if(!entry || !stop || !target) return null;
-    const risk = Math.abs(entry - stop);
-    const reward = Math.abs(target - entry);
-    if(risk <= 0) return null;
+  function calcRR(entry, stop, tp) {
+    const e = Number(entry), s = Number(stop), t = Number(tp);
+    if (![e,s,t].every(Number.isFinite) || e===s) return null;
+    const risk = Math.abs(e - s);
+    const reward = Math.abs(t - e);
+    if (risk <= 0) return null;
     return reward / risk;
   }
 
-  function startOfWeek(d){
-    // Week starts Sunday (0) for your system
-    const date = new Date(d);
-    const day = date.getDay(); // 0 Sun
-    const diff = day; // days since Sunday
-    date.setDate(date.getDate() - diff);
-    date.setHours(0,0,0,0);
-    return date;
-  }
-  function inSameWeek(dateStr){
-    const d = new Date(dateStr);
-    const now = new Date();
-    const w1 = startOfWeek(d).getTime();
-    const w2 = startOfWeek(now).getTime();
-    return w1 === w2;
-  }
-  function inSameMonth(dateStr){
-    const d = new Date(dateStr);
-    const now = new Date();
-    return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth();
+  function updateCalculator() {
+    const riskUsd = calcRiskUsd();
+    const e = Number($("entry").value);
+    const s = Number($("stop").value);
+    const dist = (Number.isFinite(e) && Number.isFinite(s)) ? Math.abs(e-s) : NaN;
+    const units = (Number.isFinite(dist) && dist>0) ? (riskUsd / dist) : NaN;
+
+    $("riskUsd").value = fmt(riskUsd,2);
+    $("stopDist").value = Number.isFinite(dist) ? fmt(dist,6) : "—";
+    $("positionUnits").value = Number.isFinite(units) ? fmt(units,4) : "—";
+    $("oneRUsd").value = fmt(riskUsd,2);
   }
 
-  // ---------- UI State ----------
-  let state = loadState();
-  let cfg = loadCfg();
-
-  // init inputs
-  $("date").value = todayISO();
-  $("capital").value = cfg.capital;
-  $("riskPct").value = cfg.riskPct;
-  $("monthlyTargetPct").value = cfg.monthlyTargetPct;
-
-  function updateCfgFromInputs(){
-    cfg.capital = Number($("capital").value || 0);
-    cfg.riskPct = Number($("riskPct").value || 0);
-    cfg.monthlyTargetPct = Number($("monthlyTargetPct").value || 0);
-    saveCfg(cfg);
+  function checklistOk() {
+    const req = ["chkA","chkB","chkC","chkRR","chkRisk","chkMind"];
+    return req.every(id => $(id).checked);
   }
 
-  function computePnL(trade){
-    // Simplified: if WIN => + (riskUsd * RR), if LOSS => -riskUsd, else 0
-    const riskUsd = cfg.capital * (cfg.riskPct/100);
-    if(trade.result === "WIN") return riskUsd * (trade.rr || 0);
-    if(trade.result === "LOSS") return -riskUsd;
-    return 0;
+  function renderStats(filteredTrades) {
+    const trades = filteredTrades;
+    const n = trades.length;
+    const wins = trades.filter(t => Number(t.resultR) > 0).length;
+    const losses = trades.filter(t => Number(t.resultR) < 0).length;
+    const hr = n ? (wins / n) * 100 : 0;
+
+    const totalR = trades.reduce((a,t)=> a + (Number(t.resultR)||0), 0);
+    const avgRR = (() => {
+      const rrVals = trades.map(t => Number(t.rr)).filter(v => Number.isFinite(v) && v>0);
+      if (!rrVals.length) return null;
+      return rrVals.reduce((a,b)=>a+b,0)/rrVals.length;
+    })();
+
+    $("kTrades").textContent = n;
+    $("kHR").textContent = `${fmt(hr,0)}%`;
+    $("kTotalR").textContent = `${fmt(totalR,2)}R`;
+    $("kAvgRR").textContent = avgRR ? `1:${fmt(avgRR,2)}` : "—";
   }
 
-  function renderKPIs(){
-    const riskUsd = cfg.capital * (cfg.riskPct/100);
-    $("riskUsd").textContent = `$ ${fmt(riskUsd)}`;
-    $("riskOut").textContent = `$ ${fmt(riskUsd)}`;
+  function dailyGuardBadge() {
+    // compute today's total R (all symbols)
+    const d = todayISO();
+    const todayTrades = state.trades.filter(t => t.date === d);
+    const totalR = todayTrades.reduce((a,t)=>a + (Number(t.resultR)||0), 0);
 
-    const trades = state.trades;
-    $("tradesCount").textContent = trades.length.toString();
-
-    const closed = trades.filter(t=>t.result==="WIN"||t.result==="LOSS");
-    const wins = trades.filter(t=>t.result==="WIN").length;
-    const losses = trades.filter(t=>t.result==="LOSS").length;
-
-    const totalPnl = trades.reduce((acc,t)=>acc + (t.pnl ?? 0), 0);
-    $("totalPnl").textContent = `${totalPnl>=0?"+":""}$ ${fmt(totalPnl)}`;
-    $("totalPnl").className = "v " + (totalPnl>=0 ? "pos":"neg");
-
-    const hr = closed.length ? (wins/closed.length)*100 : 0;
-    $("hitRate").textContent = closed.length ? `${fmt(hr)}%` : "—";
-
-    // Week & Month
-    const wk = trades.filter(t=>t.date && inSameWeek(t.date));
-    const mo = trades.filter(t=>t.date && inSameMonth(t.date));
-    $("wkTrades").textContent = wk.length.toString();
-    $("wkPnl").textContent = `${wk.reduce((a,t)=>a+(t.pnl||0),0)>=0?"+":""}$ ${fmt(wk.reduce((a,t)=>a+(t.pnl||0),0))}`;
-    $("moTrades").textContent = mo.length.toString();
-    $("moPnl").textContent = `${mo.reduce((a,t)=>a+(t.pnl||0),0)>=0?"+":""}$ ${fmt(mo.reduce((a,t)=>a+(t.pnl||0),0))}`;
+    // daily loss limit in R = dailyLossLimitPct / riskPct
+    const dailyRLimit = -(Number(state.dailyLossLimitPct) / Number(state.riskPct)); // negative
+    const el = $("dailyGuard");
+    if (!todayTrades.length) {
+      el.textContent = "حارس اليوم: لا صفقات اليوم";
+      el.className = "tag warn";
+      return;
+    }
+    if (totalR <= dailyRLimit) {
+      el.textContent = `حارس اليوم: توقّف (وصلت ${fmt(totalR,2)}R)`;
+      el.className = "tag bad";
+    } else {
+      el.textContent = `حارس اليوم: OK (اليوم ${fmt(totalR,2)}R)`;
+      el.className = "tag good";
+    }
   }
 
-  function renderReadyPill(){
-    const chks = [...document.querySelectorAll(".chk")];
-    const ok = chks.every(c=>c.checked);
-    const pill = $("readyPill");
-    pill.textContent = ok ? "جاهز للدخول ✅" : "غير جاهز للدخول";
-    pill.className = "pill " + (ok ? "ok":"");
-  }
-
-  function renderRR(){
-    const rr = calcRR($("entry").value, $("stop").value, $("target").value);
-    $("rrOut").textContent = rr ? rr.toFixed(2) : "—";
-  }
-
-  function rowHtml(t, idx){
-    const resLabel = t.result==="WIN" ? "رابحة" : t.result==="LOSS" ? "خاسرة" : "مفتوحة";
-    const resClass = t.result==="WIN" ? "pos" : t.result==="LOSS" ? "neg" : "muted";
-    const pnl = t.pnl || 0;
-    return `
-      <tr>
-        <td>${t.date||""}</td>
-        <td>${t.symbol||""}</td>
-        <td>${t.side||""}</td>
-        <td>${t.entry??""}</td>
-        <td>${t.stop??""}</td>
-        <td>${t.target??""}</td>
-        <td>${t.rr? t.rr.toFixed(2):"—"}</td>
-        <td class="${resClass}">${resLabel}</td>
-        <td class="${pnl>=0?'pos':'neg'}">${pnl>=0?"+":""}$ ${fmt(pnl)}</td>
-        <td>
-          <button onclick="markResult(${idx},'WIN')">✅</button>
-          <button onclick="markResult(${idx},'LOSS')">❌</button>
-          <button class="btn-danger" onclick="delTrade(${idx})">حذف</button>
-        </td>
-      </tr>
-    `;
-  }
-
-  function renderTrades(){
-    const sym = $("filterSym").value.trim().toUpperCase();
-    const res = $("filterResult").value;
-
-    const filtered = state.trades.filter(t=>{
-      const okSym = !sym || (t.symbol||"").toUpperCase().includes(sym);
-      const okRes = !res || t.result===res;
-      return okSym && okRes;
+  function getFilteredTrades() {
+    const fs = $("filterSymbol").value.trim().toUpperCase();
+    const fm = $("filterMonth").value; // YYYY-MM
+    return state.trades.filter(t => {
+      const okS = fs ? t.symbol.toUpperCase().includes(fs) : true;
+      const okM = fm ? t.date.startsWith(fm) : true;
+      return okS && okM;
     });
-
-    $("tradesBody").innerHTML = filtered.map((t)=>rowHtml(t, state.trades.indexOf(t))).join("") || `
-      <tr><td colspan="10" class="muted">لا يوجد صفقات بعد… ابدأ بتسجيل أول صفقة.</td></tr>
-    `;
   }
 
-  // expose to buttons in table
-  window.delTrade = function(idx){
-    if(!confirm("حذف الصفقة؟")) return;
-    state.trades.splice(idx,1);
-    saveState(state);
-    renderAll();
-  }
-  window.markResult = function(idx, r){
-    const t = state.trades[idx];
-    if(!t) return;
-    t.result = r;
-    t.pnl = computePnL(t);
-    saveState(state);
-    renderAll();
+  function renderTable() {
+    const tbody = $("tbody");
+    tbody.innerHTML = "";
+    const riskUsd = calcRiskUsd();
+
+    const trades = getFilteredTrades();
+    trades
+      .slice()
+      .sort((a,b)=> (b.date+a.id).localeCompare(a.date+b.id))
+      .forEach(t => {
+        const tr = document.createElement("tr");
+        const resR = Number(t.resultR)||0;
+        const resUsd = resR * riskUsd;
+
+        const tag = (resR>0) ? `<span class="tag good">Win</span>` : (resR<0 ? `<span class="tag bad">Loss</span>` : `<span class="tag warn">BE</span>`);
+        tr.innerHTML = `
+          <td>${t.date}</td>
+          <td>${t.symbol}</td>
+          <td>${t.side}</td>
+          <td>${t.tf}</td>
+          <td>${t.entry ?? ""}</td>
+          <td>${t.stop ?? ""}</td>
+          <td>${t.tp ?? ""}</td>
+          <td>${t.rr ? ("1:"+fmt(t.rr,2)) : "—"}</td>
+          <td>${tag} <span class="mono">${fmt(resR,2)}R</span></td>
+          <td class="mono ${resUsd>=0?'good':'bad'}">${fmt(resUsd,2)}$</td>
+          <td title="${(t.reason||"")}\n${(t.notes||"")}">${(t.reason||"").slice(0,36)}${(t.reason||"").length>36?"…":""}</td>
+          <td><button class="btn danger" data-del="${t.id}">حذف</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+    renderStats(trades);
+    dailyGuardBadge();
   }
 
-  function saveTrade(){
-    const date = $("date").value || todayISO();
-    const symbol = $("symbol").value.trim();
+  function addTrade() {
+    if (!checklistOk()) {
+      alert("لازم تكمّل الـ Checklist كامل قبل إضافة صفقة.");
+      return;
+    }
+
+    const symbol = $("symbol").value.trim() || "—";
     const side = $("side").value;
     const tf = $("tf").value;
-    const entry = Number($("entry").value);
-    const stop = Number($("stop").value);
-    const target = Number($("target").value);
+    const entry = $("entry").value ? Number($("entry").value) : null;
+    const stop = $("stop").value ? Number($("stop").value) : null;
+    const tp = $("tp").value ? Number($("tp").value) : null;
     const reason = $("reason").value.trim();
     const notes = $("notes").value.trim();
+    const date = $("date").value || todayISO();
+    const resultR = $("resultR").value;
 
-    if(!symbol || !entry || !stop || !target){
-      alert("لازم تعبي: العملة + الدخول + الستوب + الهدف.");
-      return;
-    }
-    const rr = calcRR(entry, stop, target);
-    if(!rr){
-      alert("تأكد من قيم الدخول/الستوب/الهدف.");
+    if (resultR === "") {
+      alert("اختار نتيجة الصفقة (R).");
       return;
     }
 
-    const trade = { date, symbol, side, tf, entry, stop, target, rr, reason, notes, result:"OPEN", pnl:0 };
-    state.trades.unshift(trade);
-    saveState(state);
+    const rr = (entry!=null && stop!=null && tp!=null) ? calcRR(entry, stop, tp) : null;
 
-    $("symbol").value="";
-    $("entry").value="";
-    $("stop").value="";
-    $("target").value="";
-    $("reason").value="";
-    $("notes").value="";
-    renderRR();
-    renderAll();
-  }
-
-  function renderAll(){
-    updateCfgFromInputs();
-    renderReadyPill();
-    renderKPIs();
-    renderTrades();
-    renderRR();
-  }
-
-  // ---------- Events ----------
-  ["capital","riskPct","monthlyTargetPct"].forEach(id=>{
-    $(id).addEventListener("input", ()=> renderAll());
-  });
-  ["entry","stop","target"].forEach(id=>{
-    $(id).addEventListener("input", ()=> renderRR());
-  });
-  document.querySelectorAll(".chk").forEach(c=>c.addEventListener("change", renderReadyPill));
-  $("saveTradeBtn").addEventListener("click", ()=>{
-    const ok = [...document.querySelectorAll(".chk")].every(c=>c.checked);
-    if(!ok){
-      alert("Checklist غير مكتمل. إذا بدك تدخل رغم ذلك، كمل بعد ما تعبيها (النظام يمنع العشوائية).");
+    // Enforce RR>=2 (strategy rule) when rr is available:
+    if (rr != null && rr < 2) {
+      alert("RR أقل من 1:2 — حسب النظام الصفقة مرفوضة.");
       return;
     }
-    saveTrade();
-  });
 
-  $("markWinBtn").addEventListener("click", ()=>{
-    if(!state.trades.length) return alert("ما في صفقات.");
-    window.markResult(0,"WIN");
-  });
-  $("markLossBtn").addEventListener("click", ()=>{
-    if(!state.trades.length) return alert("ما في صفقات.");
-    window.markResult(0,"LOSS");
-  });
-  $("markNoBtn").addEventListener("click", ()=>{
-    // do nothing
-    alert("تمام. ولا صفقة = قرار احترافي.");
-  });
-
-  $("filterSym").addEventListener("input", renderTrades);
-  $("filterResult").addEventListener("change", renderTrades);
-
-  $("exportBtn").addEventListener("click", ()=>{
-    const payload = { cfg, state, exportedAt: new Date().toISOString() };
-    const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `trading-journal-backup-${todayISO()}.json`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-  });
-
-  $("importBtn").addEventListener("click", ()=> $("importFile").click());
-  $("importFile").addEventListener("change", (e)=>{
-    const file = e.target.files?.[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = ()=>{
-      try{
-        const data = JSON.parse(reader.result);
-        if(data.cfg) cfg = data.cfg;
-        if(data.state) state = data.state;
-        saveCfg(cfg); saveState(state);
-        $("capital").value = cfg.capital;
-        $("riskPct").value = cfg.riskPct;
-        $("monthlyTargetPct").value = cfg.monthlyTargetPct;
-        renderAll();
-        alert("تم الاستيراد بنجاح ✅");
-      }catch{
-        alert("ملف غير صالح.");
-      }
+    // build trade
+    const t = {
+      id: String(Date.now()),
+      date, symbol, side, tf,
+      entry, stop, tp,
+      rr,
+      resultR: Number(resultR),
+      reason, notes
     };
-    reader.readAsText(file);
-    e.target.value="";
-  });
 
-  $("resetBtn").addEventListener("click", ()=>{
-    if(!confirm("أكيد بدك تصفير الدفتر؟ رح تنحذف كل البيانات.")) return;
-    localStorage.removeItem(KEY);
-    state = { trades: [] };
-    saveState(state);
-    renderAll();
-  });
+    state.trades.push(t);
+    save();
+    renderTable();
 
-  // init
-  renderAll();
+    // optional clear some fields
+    $("resultR").value = "";
+    $("notes").value = "";
+  }
+
+  function exportCSV() {
+    const trades = getFilteredTrades();
+    const header = ["date","symbol","side","tf","entry","stop","tp","rr","resultR","reason","notes"];
+    const rows = trades.map(t => header.map(k => {
+      const v = (t[k] ?? "");
+      const s = String(v).replace(/"/g,'""');
+      return `"${s}"`;
+    }).join(","));
+    const csv = [header.join(","), ...rows].join("\n");
+    const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "trading_journal.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function resetAll() {
+    if (!confirm("متأكد بدك تمسح كل البيانات؟")) return;
+    localStorage.removeItem(LS_KEY);
+    state = { equity: 100, riskPct: 1, dailyLossLimitPct: 2, trades: [] };
+    initUI();
+    save();
+    renderTable();
+  }
+
+  function initUI() {
+    $("equity").value = state.equity ?? 100;
+    $("riskPct").value = String(state.riskPct ?? 1);
+    $("dailyLossLimitPct").value = String(state.dailyLossLimitPct ?? 2);
+    $("date").value = todayISO();
+    updateCalculator();
+  }
+
+  // ===== Events =====
+  function wire() {
+    ["equity","riskPct","dailyLossLimitPct"].forEach(id => {
+      $(id).addEventListener("input", () => {
+        state.equity = Number($("equity").value) || 0;
+        state.riskPct = Number($("riskPct").value) || 1;
+        state.dailyLossLimitPct = Number($("dailyLossLimitPct").value) || 2;
+        save();
+        updateCalculator();
+        renderTable();
+      });
+      $(id).addEventListener("change", () => {
+        state.equity = Number($("equity").value) || 0;
+        state.riskPct = Number($("riskPct").value) || 1;
+        state.dailyLossLimitPct = Number($("dailyLossLimitPct").value) || 2;
+        save();
+        updateCalculator();
+        renderTable();
+      });
+    });
+
+    ["entry","stop","tp"].forEach(id => $(id).addEventListener("input", updateCalculator));
+
+    $("addTradeBtn").addEventListener("click", addTrade);
+    $("exportBtn").addEventListener("click", exportCSV);
+    $("resetAllBtn").addEventListener("click", resetAll);
+
+    $("filterSymbol").addEventListener("input", renderTable);
+    $("filterMonth").addEventListener("change", renderTable);
+
+    $("tbody").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-del]");
+      if (!btn) return;
+      const id = btn.getAttribute("data-del");
+      state.trades = state.trades.filter(t => t.id !== id);
+      save();
+      renderTable();
+    });
+  }
+
+  // ===== Boot =====
+  load();
+  initUI();
+  wire();
+  renderTable();
 </script>
 </body>
 </html>
